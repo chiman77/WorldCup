@@ -14,16 +14,16 @@ const Utils = (() => {
   function formatDate(date) {
     const m = date.getMonth() + 1;
     const d = date.getDate();
-    return I18n.lang() === 'zh' ? `${m}月${d}日` : `${date.toLocaleString('en', { month: 'short' })} ${d}`;
+    return I18n.lang().startsWith('zh') ? `${m}月${d}日` : `${date.toLocaleString('en', { month: 'short' })} ${d}`;
   }
 
   function formatDateFull(date) {
-    const weekdays = I18n.lang() === 'zh'
+    const weekdays = I18n.lang().startsWith('zh')
       ? ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
       : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const m = date.getMonth() + 1;
     const d = date.getDate();
-    if (I18n.lang() === 'zh') {
+    if (I18n.lang().startsWith('zh')) {
       return `${m}月${d}日 ${weekdays[date.getDay()]}`;
     }
     return `${weekdays[date.getDay()]}, ${date.toLocaleString('en', { month: 'long' })} ${d}`;
@@ -67,7 +67,7 @@ const Utils = (() => {
 
   function groupName(g) {
     if (!g || g === 'null') return '';
-    return `${I18n.t('group_prefix')}${I18n.lang() === 'zh' ? '' : ' '}${g}`;
+    return `${I18n.t('group_prefix')}${I18n.isZh() ? '' : ' '}${g}`;
   }
 
   function statusText(status, progress = null) {
@@ -226,7 +226,7 @@ const Utils = (() => {
   }
 
   function isZh() {
-    return I18n.lang() === 'zh';
+    return I18n.lang() === 'zh' || I18n.lang() === 'zh-tw';
   }
 
   const TOURNAMENT_START = new Date(2026, 5, 11);
@@ -268,7 +268,7 @@ const Utils = (() => {
     const day = d.getDate();
     const h = d.getHours().toString().padStart(2, '0');
     const min = d.getMinutes().toString().padStart(2, '0');
-    return I18n.lang() === 'zh' ? `${m}月${day}日 ${h}:${min}` : `${d.toLocaleString('en', { month: 'short' })} ${day}, ${h}:${min}`;
+    return I18n.lang().startsWith('zh') ? `${m}月${day}日 ${h}:${min}` : `${d.toLocaleString('en', { month: 'short' })} ${day}, ${h}:${min}`;
   }
 
   const VENUE_TIMEZONES = {
