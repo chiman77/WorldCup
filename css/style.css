@@ -457,33 +457,25 @@
 
 /* Team Info Tooltip */
 .has-tip {
-  position: relative;
   cursor: help;
 }
-.has-tip[data-info]::after {
-  content: attr(data-info);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(100% + 6px);
-  background: #0d1321;
-  color: #e8eaf6;
-  font-size: 0.7rem;
-  font-weight: 400;
+.team-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1.5;
   padding: 0.6rem 0.8rem;
   border-radius: 0.5rem;
-  border: 1px solid #d4a843;
   white-space: pre-line;
-  line-height: 1.5;
-  max-width: 300px;
+  max-width: 320px;
   min-width: 200px;
-  width: max-content;
-  z-index: 1000;
-  opacity: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   pointer-events: none;
+  opacity: 0;
   transition: opacity 0.15s ease;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
 }
-.has-tip[data-info]:hover::after {
+.team-tooltip.show {
   opacity: 1;
 }

@@ -83,5 +83,60 @@ const Standings = (() => {
     App.setGroup(group);
   }
 
+  // Team info tooltip (JS-based, using position:fixed to avoid overflow clipping)
+  let tooltipEl = null;
+
+  function initTooltip() {
+    tooltipEl = document.createElement('div');
+    tooltipEl.className = 'team-tooltip';
+    document.body.appendChild(tooltipEl);
+
+    document.addEventListener('mouseover', function(e) {
+      const target = e.target.closest('.has-tip[data-info]');
+      if (target === tooltipEl._target) return;
+      hideTooltip();
+      if (target) showTooltip(target);
+    });
+    document.addEventListener('scroll', hideTooltip, true);
+  }
+
+  function showTooltip(target) {
+    if (!tooltipEl) return;
+    const info = target.getAttribute('data-info');
+    if (!info) return;
+
+    tooltipEl._target = target;
+    tooltipEl.textContent = info;
+    tooltipEl.classList.remove('show');
+    tooltipEl.style.display = 'block';
+    tooltipEl.style.opacity = '0';
+
+    const targetRect = target.getBoundingClientRect();
+    const tipRect = tooltipEl.getBoundingClientRect();
+
+    let top = targetRect.top - tipRect.height - 8;
+    if (top < 6) top = targetRect.bottom + 8;
+
+    let left = targetRect.left + (targetRect.width - tipRect.width) / 2;
+    if (left < 6) left = 6;
+    if (left + tipRect.width > window.innerWidth - 6) {
+      left = window.innerWidth - tipRect.width - 6;
+    }
+
+    tooltipEl.style.top = top + 'px';
+    tooltipEl.style.left = left + 'px';
+    tooltipEl.style.opacity = '1';
+    tooltipEl.classList.add('show');
+  }
+
+  function hideTooltip() {
+    if (!tooltipEl) return;
+    tooltipEl._target = null;
+    tooltipEl.classList.remove('show');
+    tooltipEl.style.display = 'none';
+  }
+
+  initTooltip();
+
   return { render, handleGroupFilter };
 })();
