@@ -10,7 +10,7 @@ const Api = (() => {
   const NAME_MAP = {
     'IR Iran': 'Iran',
     'Cabo Verde': 'Cape Verde',
-    'Korea Republic': 'Korea Republic',
+    'Korea Republic': 'South Korea',
     'Czechia': 'Czechia',
     'Cote d\'Ivoire': 'Ivory Coast',
     'Turkiye': 'Turkiye',
@@ -214,6 +214,17 @@ const Api = (() => {
         `${normalizeForMatch(espnHomeName)}_${normalizeForMatch(espnAwayName)}_${day}_${month}`,
         `${normalizeForMatch(espnHomeName)}_${normalizeForMatch(espnAwayName)}_${day}`,
       ];
+      if (f.kickoffUtc) {
+        const utcD = new Date(f.kickoffUtc);
+        const utcDay = utcD.getUTCDate();
+        const utcMonth = utcD.getUTCMonth();
+        if (utcDay !== day || utcMonth !== month) {
+          tryKeys.push(
+            `${normalizeForMatch(espnHomeName)}_${normalizeForMatch(espnAwayName)}_${utcDay}_${utcMonth}`,
+            `${normalizeForMatch(espnHomeName)}_${normalizeForMatch(espnAwayName)}_${utcDay}`,
+          );
+        }
+      }
       for (const k of tryKeys) {
         if (espnByDay[k]) { espn = espnByDay[k]; break; }
       }
@@ -230,10 +241,13 @@ const Api = (() => {
         }
       }
       if (!espn && !/^(winner|loser)\s/i.test(f.homeTeam) && !/^(winner|loser)\s/i.test(f.awayTeam)) {
+        const fixtureNorms = [normalizeForMatch(espnHomeName), normalizeForMatch(espnAwayName)];
         for (const key in espnByDay) {
-          if (key.endsWith(`_${day}_${month}`) || key.endsWith(`_${day}`)) {
-            espn = espnByDay[key];
-            break;
+          if (!key.endsWith(`_${day}_${month}`) && !key.endsWith(`_${day}`)) continue;
+          const e = espnByDay[key];
+          const espnNorms = [normalizeForMatch(e.espnHome), normalizeForMatch(e.espnAway)];
+          if (fixtureNorms.some(t => espnNorms.includes(t))) {
+            espn = e; break;
           }
         }
       }
