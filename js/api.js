@@ -13,10 +13,11 @@ const Api = (() => {
     'Korea Republic': 'South Korea',
     'Czechia': 'Czechia',
     'Cote d\'Ivoire': 'Ivory Coast',
-    'Turkiye': 'Turkiye',
+    'Turkiye': 'Türkiye',
     'Congo DR': 'DR Congo',
     'United States': 'United States',
-    'Bosnia and Herzegovina': 'Bosnia and Herzegovina',
+    'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
+    'Curacao': 'Curaçao',
   };
 
   const NAME_MAP_REVERSE = {};
@@ -26,7 +27,13 @@ const Api = (() => {
 
   function normalizeTeamName(name) { return NAME_MAP[name] || name; }
   function reverseMapName(espnName) { return NAME_MAP_REVERSE[espnName.toLowerCase()] || espnName; }
-  function normalizeForMatch(s) { return (s || '').toLowerCase().replace(/[^a-z]/g, ''); }
+  function normalizeForMatch(s) {
+    return (s || '').toLowerCase()
+      .replace(/[áàâãäå]/g, 'a').replace(/[éèêë]/g, 'e')
+      .replace(/[íìîï]/g, 'i').replace(/[óòôõö]/g, 'o')
+      .replace(/[úùûü]/g, 'u').replace(/[ç]/g, 'c')
+      .replace(/[ñ]/g, 'n').replace(/[^a-z0-9]/g, '');
+  }
 
   function formatDateParam(date) {
     const y = date.getFullYear();
