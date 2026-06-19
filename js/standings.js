@@ -50,7 +50,9 @@ const Standings = (() => {
 
         html += `<tr class="standings-row ${posClass} ${isQualified ? 'qualified' : ''}">`;
         html += `<td class="pl-4 ${idx < 3 ? 'text-amber-400 font-bold' : 'text-gray-500'}">${rankBadge || (idx + 1)}</td>`;
-        html += `<td><div class="flex items-center gap-2 min-w-0">${logo}<span class="font-medium truncate">${teamName}</span></div></td>`;
+        const infoText = I18n.teamInfo(row.team);
+        const infoAttr = infoText ? `data-info="${Utils.escape(infoText)}"` : '';
+        html += `<td><div class="flex items-center gap-2 min-w-0 has-tip" ${infoAttr}>${logo}<span class="font-medium truncate">${teamName}</span></div></td>`;
         html += `<td class="text-center font-medium">${row.played}</td>`;
         html += `<td class="text-center text-green-400">${row.won || ''}</td>`;
         html += `<td class="text-center text-gray-400">${row.drawn || ''}</td>`;
