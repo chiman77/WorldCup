@@ -479,3 +479,60 @@
 .team-tooltip.show {
   opacity: 1;
 }
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .match-card {
+    padding: 0.6rem 0.75rem;
+  }
+  .match-score {
+    font-size: 1.25rem;
+    min-width: 3rem;
+  }
+  .match-card-top {
+    margin-bottom: 0.25rem;
+  }
+  .team-name {
+    font-size: 0.8rem;
+  }
+  .team-flag {
+    font-size: 1.1rem;
+  }
+  .team-score {
+    font-size: 1rem;
+    min-width: 1.2rem;
+  }
+  .standings-table td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.75rem;
+  }
+  .standings-table th {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.6rem;
+  }
+  .team-tooltip {
+    min-width: 150px;
+    max-width: 260px;
+    font-size: 0.65rem;
+    padding: 0.4rem 0.6rem;
+  }
+  .bracket-tab {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.65rem;
+  }
+  .bracket-tab-count {
+    width: 0.9rem;
+    height: 0.9rem;
+    font-size: 0.5rem;
+  }
+  .bracket-card {
+    padding: 0.6rem 0.75rem;
+  }
+  .date-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+  .stage-badge {
+    font-size: 0.55rem;
+  }
+}

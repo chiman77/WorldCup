@@ -122,8 +122,16 @@
   }
 
   function setupMobileMenu() {
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
-      document.getElementById('mobileNav')?.classList.toggle('hidden');
+    const btn = document.getElementById('mobileMenuBtn');
+    const nav = document.getElementById('mobileNav');
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      nav?.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (nav && !nav.classList.contains('hidden') && !nav.contains(e.target) && e.target !== btn) {
+        nav.classList.add('hidden');
+      }
     });
   }
 
@@ -131,6 +139,16 @@
     document.getElementById('modalClose')?.addEventListener('click', closeModal);
     document.getElementById('modalOverlay')?.addEventListener('click', closeModal);
   }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      const mobileNav = document.getElementById('mobileNav');
+      if (mobileNav && !mobileNav.classList.contains('hidden')) {
+        mobileNav.classList.add('hidden');
+      }
+    }
+  });
 
   function closeModal() {
     document.getElementById('matchModal')?.classList.add('hidden');
