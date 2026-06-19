@@ -190,7 +190,7 @@ const I18n = (() => {
       events: '事件',
       match_num: '第{n}場',
       bracket_hint: '← 滑動 →',
-      group_prefix: '第',
+      group_prefix: '小組',
       winner: '勝',
       draw: '平',
       loser: '負',
