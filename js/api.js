@@ -259,15 +259,57 @@ const Api = (() => {
         }
       }
 
+      if (!espn && f.stadium && /group/i.test(f.homeTeam + f.awayTeam)) {
+        const venueNorm = f.stadium.toLowerCase().trim();
+        for (const key in espnByDay) {
+          const e = espnByDay[key];
+          if (e.venueName) {
+            const evNorm = e.venueName.toLowerCase().trim();
+            if (evNorm === venueNorm || evNorm.includes(venueNorm)) {
+              espn = e;
+              break;
+            }
+          }
+        }
+        if (!espn && f.hostCity) {
+          const venueToCity = {
+            'estadio azteca': 'mexico-city', 'estadio banorte': 'mexico-city',
+            'estadio bbva': 'monterrey', 'estadio akron': 'guadalajara',
+            'sofi stadium': 'los-angeles', "levi's stadium": 'san-francisco',
+            'lumen field': 'seattle', 'nrg stadium': 'houston',
+            "at&t stadium": 'dallas', 'arrowhead stadium': 'kansas-city',
+            'gillette stadium': 'boston', 'metlife stadium': 'new-york',
+            'lincoln financial field': 'philadelphia',
+            'mercedes-benz stadium': 'atlanta', 'hard rock stadium': 'miami',
+            'bmo field': 'toronto', 'bc place': 'vancouver',
+            'soldier field': 'chicago',
+          };
+          for (const key in espnByDay) {
+            const e = espnByDay[key];
+            if (e.venueName && venueToCity[e.venueName.toLowerCase().trim()] === f.hostCity) {
+              espn = e;
+              break;
+            }
+          }
+        }
+        if (espn) {
+          console.log(`[Merge] Venue-matched #${f.matchNumber}: ${f.homeTeam} vs ${f.awayTeam} → ${espn.espnHome} vs ${espn.espnAway}`);
+        }
+      }
+
       if (!espn) {
         console.log(`[Merge] NO MATCH for #${f.matchNumber}: ${f.homeTeam} vs ${f.awayTeam} (${f.date}) — normalized: ${normalizeForMatch(espnHomeName)} vs ${normalizeForMatch(espnAwayName)}, day=${day}, month=${month}`);
         unmatched.push(`#${f.matchNumber} ${f.homeTeam} vs ${f.awayTeam}`);
       }
 
+      const hasGroupPlaceholder = /group/i.test(f.homeTeam + f.awayTeam);
+      const effectiveHome = espn && hasGroupPlaceholder && espn.espnHome ? reverseMapName(espn.espnHome) : f.homeTeam;
+      const effectiveAway = espn && hasGroupPlaceholder && espn.espnAway ? reverseMapName(espn.espnAway) : f.awayTeam;
+
       return {
         id: f.matchNumber,
-        homeTeam: f.homeTeam,
-        awayTeam: f.awayTeam,
+        homeTeam: effectiveHome,
+        awayTeam: effectiveAway,
         group: f.group,
         stage: f.stage,
         date: Utils.formatBeijingDateStr(f.kickoffUtc) || f.date,
