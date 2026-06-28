@@ -73,17 +73,16 @@ const Api = (() => {
   }
 
   const TOURNAMENT_START = new Date(2026, 5, 11);
+  const TOURNAMENT_END = new Date(2026, 6, 19);
 
   async function fetchScoreboard() {
     const now = Date.now();
     if (allScoreboardEvents.length > 0 && (now - lastScoreboardFetch) < 30000) {
       return allScoreboardEvents;
     }
-    const today = new Date();
     const dates = [];
     const start = new Date(TOURNAMENT_START);
-    const end = new Date(today);
-    end.setDate(end.getDate() + 1);
+    const end = new Date(TOURNAMENT_END);
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       dates.push(formatDateParam(d));
     }
@@ -196,6 +195,7 @@ const Api = (() => {
         awayTeamAbbr: awayTeam.team?.abbreviation || '',
         goals,
         cards,
+        _dateStr: evt.date ? evt.date.slice(0, 10) : '',
       };
 
       const keys = [
@@ -261,14 +261,16 @@ const Api = (() => {
 
       if (!espn && f.stadium && /group/i.test(f.homeTeam + f.awayTeam)) {
         const venueNorm = f.stadium.toLowerCase().trim();
+        const fixDate = f.date || '';
         for (const key in espnByDay) {
           const e = espnByDay[key];
-          if (e.venueName) {
-            const evNorm = e.venueName.toLowerCase().trim();
-            if (evNorm === venueNorm || evNorm.includes(venueNorm)) {
-              espn = e;
-              break;
-            }
+          if (!e.venueName || !e._dateStr) continue;
+          const ed = e._dateStr;
+          if (ed !== fixDate && ed !== getAdjacentDate(fixDate, -1) && ed !== getAdjacentDate(fixDate, 1)) continue;
+          const evNorm = e.venueName.toLowerCase().trim();
+          if (evNorm === venueNorm || evNorm.includes(venueNorm)) {
+            espn = e;
+            break;
           }
         }
         if (!espn && f.hostCity) {
@@ -286,7 +288,10 @@ const Api = (() => {
           };
           for (const key in espnByDay) {
             const e = espnByDay[key];
-            if (e.venueName && venueToCity[e.venueName.toLowerCase().trim()] === f.hostCity) {
+            if (!e.venueName || !e._dateStr) continue;
+            const ed = e._dateStr;
+            if (ed !== fixDate && ed !== getAdjacentDate(fixDate, -1) && ed !== getAdjacentDate(fixDate, 1)) continue;
+            if (venueToCity[e.venueName.toLowerCase().trim()] === f.hostCity) {
               espn = e;
               break;
             }
@@ -340,6 +345,16 @@ const Api = (() => {
       console.log(`[Merge] ${unmatched.length} / ${fixtures.length} fixtures unmatched: ${unmatched.join(', ')}`);
     }
     return results;
+  }
+
+  function getAdjacentDate(dateStr, offset) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + offset);
+    const y = d.getFullYear();
+    const m = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   function isLive(status) {
